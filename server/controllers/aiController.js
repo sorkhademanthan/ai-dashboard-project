@@ -2,6 +2,7 @@ import groqAPI from '../utils/groq.js';
 import axios from 'axios';
 // ✅ Import your Prompt model
 import Prompt from '../models/Prompt.js';
+// ✅ Import your Groq API utility if you have one
 
 export const generateTasks = async (req, res) => {
   const { prompt } = req.body;
