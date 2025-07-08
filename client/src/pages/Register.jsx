@@ -6,51 +6,57 @@ const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const navigate = useNavigate();
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/register', form);
+      await axios.post('/users/register', form); // ✅ FIXED route
       alert('Registered successfully!');
       navigate('/');
     } catch (err) {
+      console.error('Register error:', err);
       alert(err.response?.data?.message || 'Error registering');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex justify-center items-center">
-      <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6">
-        <h2 className="text-3xl font-bold text-white text-center">Register 📝</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 p-8 rounded-xl w-full max-w-sm space-y-4 shadow-md"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <input
           name="name"
           placeholder="Name"
-          className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
           onChange={handleChange}
+          className="w-full p-3 rounded bg-gray-700 text-white placeholder-gray-400"
+          required
         />
         <input
           name="email"
           placeholder="Email"
-          className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
+          type="email"
           onChange={handleChange}
+          className="w-full p-3 rounded bg-gray-700 text-white placeholder-gray-400"
+          required
         />
         <input
           name="password"
           placeholder="Password"
           type="password"
-          className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
           onChange={handleChange}
+          className="w-full p-3 rounded bg-gray-700 text-white placeholder-gray-400"
+          required
         />
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:brightness-110 transition"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 transition px-4 py-2 rounded font-semibold"
         >
           Register
         </button>
-        <p className="text-center text-sm text-gray-400">
-          Already have an account? <span className="underline cursor-pointer text-indigo-400" onClick={() => navigate('/')}>Login</span>
-        </p>
       </form>
     </div>
   );
