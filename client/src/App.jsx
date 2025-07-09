@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
 // ✅ Optional: Uncomment after creating Profile.jsx
-// import Profile from './pages/Profile';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -22,8 +22,8 @@ function App() {
           </PrivateRoute>
         }
       />
-      {/* ✅ Uncomment this only if Profile.jsx exists */}
-      {/* <Route
+
+      <Route
         path="/profile"
         element={
           <PrivateRoute>
@@ -32,7 +32,7 @@ function App() {
             </Layout>
           </PrivateRoute>
         }
-      /> */}
+      />
     </Routes>
   );
 }

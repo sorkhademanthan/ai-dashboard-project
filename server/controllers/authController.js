@@ -1,49 +1,44 @@
-// export const registerUser = (req, res) => {
-//   res.send("Register user");
-// };
-
-// export const loginUser = (req, res) => {
-//   res.send("Login user");
-// };
-
-// import hfRequest from '../utils/huggingface.js';
+// server/controllers/authController.js
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
-
 // Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
 };
 
-// 👉 Register Controller
+// @desc    Register new user
+// @route   POST /api/auth/register
+// @access  Public
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // 1. Check if user already exists
+    // Input validation (basic)
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // 2. Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 3. Create user
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    // 4. Send response with token
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -52,25 +47,33 @@ export const registerUser = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('🔴 Register error:', error.message);
+    res.status(500).json({ message: 'Server error during registration' });
   }
 };
 
-// 👉 Login Controller
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // 1. Check if user exists
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid email or password' });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
-    // 2. Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid email or password' });
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
-    // 3. Send response with token
-    res.json({
+    res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -78,7 +81,7 @@ export const loginUser = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('🔴 Login error:', error.message);
+    res.status(500).json({ message: 'Server error during login' });
   }
 };
-

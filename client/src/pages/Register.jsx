@@ -1,6 +1,7 @@
+// client/src/pages/Register.jsx
 import { useState } from 'react';
 import axios from '../api/axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -12,7 +13,10 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/users/register', form); // ✅ FIXED route
+      await axios.post('/auth/register', form); // ✅ fixed route
+      // ✅ Register endpoint
+      localStorage.setItem('token', ''); // Clear token on register
+      // ✅ Clear token after registration
       alert('Registered successfully!');
       navigate('/');
     } catch (err) {
@@ -34,6 +38,7 @@ const Register = () => {
           onChange={handleChange}
           className="w-full p-3 rounded bg-gray-700 text-white placeholder-gray-400"
           required
+          autoComplete="name"
         />
         <input
           name="email"
@@ -42,6 +47,7 @@ const Register = () => {
           onChange={handleChange}
           className="w-full p-3 rounded bg-gray-700 text-white placeholder-gray-400"
           required
+          autoComplete="email"
         />
         <input
           name="password"
@@ -50,6 +56,7 @@ const Register = () => {
           onChange={handleChange}
           className="w-full p-3 rounded bg-gray-700 text-white placeholder-gray-400"
           required
+          autoComplete="new-password"
         />
         <button
           type="submit"
@@ -57,6 +64,17 @@ const Register = () => {
         >
           Register
         </button>
+
+        {/* Link to login */}
+        <p className="text-sm text-center">
+          Already have an account?{' '}
+          <Link
+            to="/"
+            className="text-indigo-400 hover:underline hover:text-indigo-300"
+          >
+            Login here
+          </Link>
+        </p>
       </form>
     </div>
   );
